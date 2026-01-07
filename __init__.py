@@ -1,13 +1,6 @@
-"""
-Submodule Utilities.
+from importlib.metadata import version
 
-"""
-
-# from .proc import CalledProcessError
-# from .proc import ProcError
-
-__version__ = "0.1.0"
-__name__ = "k3modutil"
+__version__ = version("k3modutil")
 
 from .modutil import (
     submodules,
