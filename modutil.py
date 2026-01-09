@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import importlib
 import os
 import pkgutil
 
@@ -22,9 +23,9 @@ def submodules(root_module):
         return None
 
     rst = {}
-    for imp, name, _ in pkgutil.iter_modules([pathname]):
-        loader = imp.find_module(root_module.__name__ + "." + name)
-        mod = loader.load_module(root_module.__name__ + "." + name)
+    for _, name, _ in pkgutil.iter_modules([pathname]):
+        full_name = root_module.__name__ + "." + name
+        mod = importlib.import_module(full_name)
         rst[name] = mod
 
     return rst
