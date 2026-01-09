@@ -1,7 +1,6 @@
 # k3modutil
 
 [![Action-CI](https://github.com/pykit3/k3modutil/actions/workflows/python-package.yml/badge.svg)](https://github.com/pykit3/k3modutil/actions/workflows/python-package.yml)
-[![Build Status](https://travis-ci.com/pykit3/k3modutil.svg?branch=master)](https://travis-ci.com/pykit3/k3modutil)
 [![Documentation Status](https://readthedocs.org/projects/k3modutil/badge/?version=stable)](https://k3modutil.readthedocs.io/en/stable/?badge=stable)
 [![Package](https://img.shields.io/pypi/pyversions/k3modutil)](https://pypi.org/project/k3modutil)
 
