@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
 import sys
 import unittest
-import k3modutil
+
 import k3ut
+
+import k3modutil
 
 dd = k3ut.dd
 
@@ -52,7 +51,7 @@ class TestModutil(unittest.TestCase):
 
             try:
                 rst = k3modutil.submodules(root)
-            except Exception as e:
+            except AttributeError as e:
                 self.assertEqual(type(e), error)
             else:
                 dd("rst: ", rst)
@@ -115,7 +114,7 @@ class TestModutil(unittest.TestCase):
 
             try:
                 rst = k3modutil.submodule_tree(root)
-            except Exception as e:
+            except AttributeError as e:
                 self.assertEqual(type(e), error)
             else:
                 dd("rst: ", rst)
@@ -159,7 +158,7 @@ class TestModutil(unittest.TestCase):
 
             try:
                 rst = k3modutil.submodule_leaf_tree(root)
-            except Exception as e:
+            except AttributeError as e:
                 self.assertEqual(type(e), error)
             else:
                 dd("rst: ", rst)

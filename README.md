@@ -9,9 +9,6 @@ Submodule Utilities.
 k3modutil is a component of [pykit3] project: a python3 toolkit set.
 
 
-Submodule Utilities.
-
-
 
 
 # Install
@@ -23,9 +20,9 @@ pip install k3modutil
 # Synopsis
 
 ```python
+import pykit
 
 import k3modutil
-import pykit
 
 k3modutil.submodules(pykit)
 # {
@@ -63,7 +60,6 @@ k3modutil.submodule_leaf_tree(pykit)
 #                }
 #    ... ...
 # }
-
 ```
 
 #   Author

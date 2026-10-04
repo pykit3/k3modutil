@@ -1,5 +1,6 @@
-import k3modutil
 import pykit
+
+import k3modutil
 
 k3modutil.submodules(pykit)
 # {
