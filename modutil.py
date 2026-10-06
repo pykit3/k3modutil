@@ -7,6 +7,8 @@ def submodules(root_module):
     """
     Load all submodules of `root_module`.
     And map these submodules names to submodules.
+    It imports each submodule, so the module-level code of a submodule that
+    is not imported yet runs.
     :param root_module: is a module.
     :return: a dict whose keys are name of submodules and values are submodules loaded.
     Or `{}` if no submodule loaded.
@@ -36,6 +38,8 @@ def submodule_tree(root_module):
     is the submodule dict of the 'module' part. If the 'module' part has no submodule,
     the 'children' part will be assigned to `{}`. If the 'module' part is not the
     directory structure, the 'children' part will be assigned to None.
+    It imports every submodule at every depth, so the module-level code of a
+    submodule that is not imported yet runs.
     :param root_module: is a module.
     :return: the submodule dict of `root_module`.
     Or None if `root_module` is not the directory structure.
@@ -64,6 +68,8 @@ def submodule_leaf_tree(root_module):
     submodule-leaf dict of the submodule the key named, or the submodule itself if
     the submodule is not the directory structure.
     If no submodule loaded, submodule-leaf dict will be `{}`.
+    It imports every submodule at every depth, so the module-level code of a
+    submodule that is not imported yet runs.
     :param root_module: is a module.
     :return: the submodule-leaf dict of `root_module`.
     Or None if `root_module` is not the directory structure.
