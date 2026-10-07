@@ -1,5 +1,4 @@
 import importlib
-import os
 import pkgutil
 
 
@@ -14,15 +13,12 @@ def submodules(root_module):
     Or `{}` if no submodule loaded.
     Or None if `root_module` is not the directory structure.
     """
-    mod_path = root_module.__file__
-
-    fn = os.path.basename(mod_path)
-    pathname = os.path.dirname(mod_path)
-    if fn not in ("__init__.py", "__init__.pyc"):
+    # A namespace package has no `__file__`, but every package has `__path__`.
+    if not hasattr(root_module, "__path__"):
         return None
 
     rst = {}
-    for _, name, _ in pkgutil.iter_modules([pathname]):
+    for _, name, _ in pkgutil.iter_modules(root_module.__path__):
         full_name = root_module.__name__ + "." + name
         mod = importlib.import_module(full_name)
         rst[name] = mod

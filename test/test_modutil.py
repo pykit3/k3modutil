@@ -22,6 +22,8 @@ class TestModutil(unittest.TestCase):
             "root0.mod2",
             "root1",
             "root2",
+            "root3",
+            "root3.mod30",
         ]
 
         for module in module_tree:
@@ -43,7 +45,9 @@ class TestModutil(unittest.TestCase):
             ),
             (sys.modules["root1"], {}, None),
             (sys.modules["root2"], None, None),
-            ({}, None, AttributeError),
+            # root3 is a namespace package: it has no __init__.py.
+            (sys.modules["root3"], {"mod30": sys.modules["root3.mod30"]}, None),
+            ({}, None, None),
         ]
 
         for root, rst_expected, error in test_cases:
