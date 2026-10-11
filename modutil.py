@@ -39,12 +39,8 @@ def submodule_tree(root_module):
     :param root_module: is a module.
     :return: the submodule dict of `root_module`.
     Or None if `root_module` is not the directory structure.
-    """
-    """Example:
-    {'submod1': {'module': <module> submod1,
-     'children': submodule_tree(<module> submod1),
-    },
-    }
+    Example:
+    {'submod1': {'module': <module> submod1, 'children': submodule_tree(<module> submod1)}}
     """
     rst = submodules(root_module)
     if rst is None:
