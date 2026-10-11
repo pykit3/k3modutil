@@ -1,5 +1,7 @@
+import importlib
 import os
 import sys
+import tempfile
 import unittest
 
 import k3ut
@@ -41,26 +43,22 @@ class TestModutil(unittest.TestCase):
                     "mod1": sys.modules["root0.mod1"],
                     "mod2": sys.modules["root0.mod2"],
                 },
-                None,
             ),
-            (sys.modules["root1"], {}, None),
-            (sys.modules["root2"], None, None),
+            (sys.modules["root1"], {}),
+            (sys.modules["root2"], None),
             # root3 is a namespace package: it has no __init__.py.
-            (sys.modules["root3"], {"mod30": sys.modules["root3.mod30"]}, None),
-            ({}, None, None),
+            (sys.modules["root3"], {"mod30": sys.modules["root3.mod30"]}),
+            # An object without __path__ is not a package.
+            ({}, None),
         ]
 
-        for root, rst_expected, error in test_cases:
-            dd("case: ", root, rst_expected, error)
+        for root, rst_expected in test_cases:
+            dd("case: ", root, rst_expected)
 
-            try:
-                rst = k3modutil.submodules(root)
-            except AttributeError as e:
-                self.assertEqual(type(e), error)
-            else:
-                dd("rst: ", rst)
+            rst = k3modutil.submodules(root)
+            dd("rst: ", rst)
 
-                self.assertEqual(rst, rst_expected)
+            self.assertEqual(rst_expected, rst)
 
     def test_submodule_tree(self):
         test_cases = [
@@ -94,35 +92,28 @@ class TestModutil(unittest.TestCase):
                         "children": None,
                     },
                 },
-                None,
             ),
             (
                 sys.modules["root1"],
                 {},
-                None,
             ),
             (
                 sys.modules["root2"],
-                None,
                 None,
             ),
             (
                 {},
                 None,
-                AttributeError,
             ),
         ]
 
-        for root, rst_expected, error in test_cases:
-            dd("case: ", root, rst_expected, error)
+        for root, rst_expected in test_cases:
+            dd("case: ", root, rst_expected)
 
-            try:
-                rst = k3modutil.submodule_tree(root)
-            except AttributeError as e:
-                self.assertEqual(type(e), error)
-            else:
-                dd("rst: ", rst)
-                self.assertEqual(rst, rst_expected)
+            rst = k3modutil.submodule_tree(root)
+            dd("rst: ", rst)
+
+            self.assertEqual(rst_expected, rst)
 
     def test_submodule_leaf_tree(self):
         test_cases = [
@@ -138,32 +129,69 @@ class TestModutil(unittest.TestCase):
                     },
                     "mod2": sys.modules["root0.mod2"],
                 },
-                None,
             ),
             (
                 sys.modules["root1"],
                 {},
-                None,
             ),
             (
                 sys.modules["root2"],
-                None,
                 None,
             ),
             (
                 {},
                 None,
-                AttributeError,
             ),
         ]
 
-        for root, rst_expected, error in test_cases:
-            dd("case: ", root, rst_expected, error)
+        for root, rst_expected in test_cases:
+            dd("case: ", root, rst_expected)
 
-            try:
-                rst = k3modutil.submodule_leaf_tree(root)
-            except AttributeError as e:
-                self.assertEqual(type(e), error)
-            else:
-                dd("rst: ", rst)
-                self.assertEqual(rst, rst_expected)
+            rst = k3modutil.submodule_leaf_tree(root)
+            dd("rst: ", rst)
+
+            self.assertEqual(rst_expected, rst)
+
+    def test_submodules_import_error(self):
+        # The error that a submodule raises while it is imported reaches the caller unchanged.
+        with tempfile.TemporaryDirectory() as tmp:
+            os.mkdir(os.path.join(tmp, "broken"))
+            with open(os.path.join(tmp, "broken", "__init__.py"), "w") as f:
+                f.write("")
+            with open(os.path.join(tmp, "broken", "bad.py"), "w") as f:
+                f.write('raise RuntimeError("bad submodule")\n')
+
+            sys.path.append(tmp)
+            self.addCleanup(sys.path.remove, tmp)
+            self.addCleanup(sys.modules.pop, "broken", None)
+            importlib.invalidate_caches()
+
+            broken = importlib.import_module("broken")
+            with self.assertRaises(RuntimeError) as ctx:
+                k3modutil.submodules(broken)
+
+        self.assertEqual(("bad submodule",), ctx.exception.args)
+
+    def test_submodule_tree_namespace_in_two_dirs(self):
+        # A namespace package spread over two directories has the submodules of both.
+        with tempfile.TemporaryDirectory() as dir_a, tempfile.TemporaryDirectory() as dir_b:
+            for base, name in ((dir_a, "mod_a"), (dir_b, "mod_b")):
+                os.mkdir(os.path.join(base, "spread"))
+                with open(os.path.join(base, "spread", name + ".py"), "w") as f:
+                    f.write("")
+
+                sys.path.append(base)
+                self.addCleanup(sys.path.remove, base)
+
+            for mod in ("spread", "spread.mod_a", "spread.mod_b"):
+                self.addCleanup(sys.modules.pop, mod, None)
+            importlib.invalidate_caches()
+
+            spread = importlib.import_module("spread")
+            rst = k3modutil.submodule_tree(spread)
+
+        expected = {
+            "mod_a": {"module": sys.modules["spread.mod_a"], "children": None},
+            "mod_b": {"module": sys.modules["spread.mod_b"], "children": None},
+        }
+        self.assertEqual(expected, rst)
