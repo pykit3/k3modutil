@@ -1,40 +1,35 @@
-import pykit
+import xml
 
 import k3modutil
 
-k3modutil.submodules(pykit)
+k3modutil.submodules(xml)
 # {
-#    'modutil': <module> pykit.modutil,
-#    ... ...
+#     'dom': <module 'xml.dom' from '...'>,
+#     'etree': <module 'xml.etree' from '...'>,
+#     'parsers': <module 'xml.parsers' from '...'>,
+#     'sax': <module 'xml.sax' from '...'>,
 # }
 
-k3modutil.submodule_tree(pykit)
+k3modutil.submodule_tree(xml)
 # {
-#    'modutil': {'module': <module> pykit.modutil,
-#                'children': {
-#                            'modutil': {
-#                                    'module': <module> pykit.modutil.modutil,
-#                                    'children': None,
-#                                    },
-#                            'test': {
-#                                    'module': <module> pykit.modutil.test,
-#                                    'children': {
-#                                        'test_modutil': {
-#                                            'module': <module> pykit.modutil.test.test_modutil,
-#                                            'children': None,
-#                                        },
-#                                    },
-#                            }
-#                },
-#               }
-#    ... ...
+#     ...
+#     'parsers': {
+#         'module': <module 'xml.parsers' from '...'>,
+#         'children': {
+#             'expat': {
+#                 'module': <module 'xml.parsers.expat' from '...'>,
+#                 'children': None,
+#             },
+#         },
+#     },
+#     ...
 # }
 
-k3modutil.submodule_leaf_tree(pykit)
+k3modutil.submodule_leaf_tree(xml)
 # {
-#    'modutil': {
-#                'modutil': <module> pykit.modutil.modutil,
-#                'test': {'test_modutil': <module> pykit.modutil.test.test_modutil},
-#                }
-#    ... ...
+#     ...
+#     'parsers': {
+#         'expat': <module 'xml.parsers.expat' from '...'>,
+#     },
+#     ...
 # }
